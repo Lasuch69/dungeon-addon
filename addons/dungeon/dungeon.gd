@@ -92,8 +92,8 @@ func _distribute_rooms(amount: int, seed: int = 0) -> Array:
 	var rooms: Array
 	
 	for i in amount:
-		var room_size = Vector2(randi_range(3, 8), randi_range(3, 8)) * 16
-		var room_position = Vector2(randi_range(-8, 8), randi_range(-8, 8)) * 16
+		var room_size = Vector2(randi_range(3, 8), randi_range(3, 8))
+		var room_position = Vector2(randi_range(-8, 8), randi_range(-8, 8))
 		
 		var room = _create_room(room_size)
 		room.position = room_position
@@ -115,7 +115,7 @@ func _on_room_sleeping_state_changed(room: Room) -> void:
 
 
 func _create_room(size: Vector2) -> Room:
-	var room = Room.new(size, Vector2(16, 16) * 4)
+	var room = Room.new(size)
 	room.lock_rotation = true
 	
 	return room

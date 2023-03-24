@@ -4,7 +4,7 @@ class_name Room extends RigidBody2D
 var collision_shape: CollisionShape2D
 var size: Vector2
 
-var collision_margin: Vector2 = Vector2(16, 16):
+var collision_margin: Vector2 = Vector2(1, 1):
 	set(value):
 		collision_margin = value
 		collision_shape.shape.size = size + collision_margin
