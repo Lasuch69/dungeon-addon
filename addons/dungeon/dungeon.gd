@@ -8,16 +8,22 @@ var _count: int
 var _mst: MinimumSpanningTree = MinimumSpanningTree.new()
 var _graph: DelaunayGraph = DelaunayGraph.new()
 
+var _rooms: Array
 var _points: Array
 var _tree: Array
 
 func _ready() -> void:
-	var rooms = _distribute_rooms(64)
-	_count = 64
+	var size: int = 6
+	
+	_rooms = _distribute_rooms(size)
+	_count = size
 	
 	await all_rooms_sleeping
 	
-	var points = rooms.map(func(room): return room.position.snapped(Vector2(16, 16)))
+	var points = _rooms.map(func(room): return room.position)
+	
+	_points = points
+	_tree = generate(points)
 	
 	_points = points
 	_tree = generate(points)
@@ -26,16 +32,23 @@ func _ready() -> void:
 
 
 func _draw() -> void:
-	print("draw")
+	if _tree.is_empty():
+		return
 	
-	if !_tree.is_empty():
-		var edges = _tree[0]
+	var edges = _tree[0]
+	
+	for edge in edges:
+		var point: Vector2 = _points[edge[0]]
+		var other_point: Vector2 = _points[edge[1]]
 		
-		for edge in edges:
-			var point: Vector2 = _points[edge[0]]
-			var other_point: Vector2 = _points[edge[1]]
-			
-			draw_line(point, other_point, Color.GHOST_WHITE)
+		draw_line(point, other_point, Color.GHOST_WHITE)
+	
+	for room in _rooms:
+		var rect: Rect2 = room.get_rect()
+		
+		rect.position -= rect.size / 2
+		
+		draw_rect(rect, Color.GHOST_WHITE)
 
 
 func generate(points: Array) -> Array:
@@ -79,8 +92,8 @@ func _distribute_rooms(amount: int, seed: int = 0) -> Array:
 	var rooms: Array
 	
 	for i in amount:
-		var room_size = Vector2(randi_range(3, 8) * 16, randi_range(3, 8) * 16)
-		var room_position = Vector2(randi_range(-32, 32), randi_range(-32, 32))
+		var room_size = Vector2(randi_range(3, 8), randi_range(3, 8)) * 16
+		var room_position = Vector2(randi_range(-8, 8), randi_range(-8, 8)) * 16
 		
 		var room = _create_room(room_size)
 		room.position = room_position
@@ -102,14 +115,7 @@ func _on_room_sleeping_state_changed(room: Room) -> void:
 
 
 func _create_room(size: Vector2) -> Room:
-	var shape = RectangleShape2D.new()
-	shape.size = size
-	
-	var collision = CollisionShape2D.new()
-	collision.shape = shape
-	
-	var room = Room.new(collision)
-	
+	var room = Room.new(size, Vector2(16, 16) * 4)
 	room.lock_rotation = true
 	
 	return room
