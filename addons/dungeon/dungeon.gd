@@ -110,6 +110,8 @@ func _distribute_rooms(amount: int, seed: int = 0) -> Array:
 func _on_room_sleeping_state_changed(room: Room) -> void:
 	_count -= 1
 	
+	room.position = room.position.round()
+	
 	if _count == 0:
 		all_rooms_sleeping.emit()
 
