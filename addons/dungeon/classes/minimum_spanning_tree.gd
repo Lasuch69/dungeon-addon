@@ -1,4 +1,4 @@
-# mst.gd
+# minimum_spanning_tree.gd
 class_name MinimumSpanningTree extends RefCounted
 
 var _graph: Array
